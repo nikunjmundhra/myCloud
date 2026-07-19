@@ -4,5 +4,15 @@
 
 {% block content %}
     <h1>Welcome to myCloud</h1>
+    <form method ="POST">
+        <label for ="name">Enter your name:</label>
+        <input type="text" id="name" name="name">
+
+        <button type="submit">Submit</button>
+    </form>
+    {% if name %}
+    <h2>Hello, {{ name }}!</h2>
+    {% endif %}
     <p>Your personal cloud server is running.</p>
+    
 {% endblock %}
