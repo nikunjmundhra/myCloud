@@ -22,9 +22,24 @@ def upload():
      
     if request.method=="POST":
         file = request.files["file"]
+        if file.filename == "":
+            return render_template(
+                "upload.html",
+             title="Upload")
+                
         filename=secure_filename(file.filename)
-        file.save(f"uploads/{filename}")
-        print(f"Saved file : {filename}")
+        base,extension=os.path.splitext(filename)
+        i=1
+        path=f"uploads/{filename}"
+        if os.path.exists(path):
+            filename=f"{base} ({i}){extension}"
+            path=f"uploads/{filename}"
+            while os.path.exists(f"uploads/{base} ({i}){extension}"):
+                i+=1
+                filename=f"{base} ({i}){extension}"
+                path=f"uploads/{base} ({i}){extension}"
+        file.save(path)
+        print(f"Saved file: {filename}")
 
     return render_template(
         "upload.html",
