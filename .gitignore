@@ -17,5 +17,5 @@ Thumbs.db
 # VS Code (optional)
 .vscode/
 
-#syncthing
-.stfolder/
+uploads/*
+!uploads/.gitkeep
