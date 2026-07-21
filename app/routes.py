@@ -1,6 +1,5 @@
-from flask import Flask,render_template ,request
-
-app = Flask(__name__)
+from flask import render_template, request
+from app import app
 
 @app.route("/",methods =["GET","POST"])
 def home():
@@ -15,6 +14,3 @@ def home():
 @app.route("/login")
 def login():
     return render_template("login.html",title ="Login")
-
-if __name__ == "__main__":
-    app.run(debug=True)
