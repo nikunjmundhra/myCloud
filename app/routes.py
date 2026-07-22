@@ -45,3 +45,17 @@ def upload():
         "upload.html",
         title="upload"
     )
+
+@app.route("/files")
+def files():
+    files=os.listdir("uploads")
+    correctfiles=[]
+    for file in files:
+        if file==".gitkeep":
+            continue
+        correctfiles.append(file)
+    return render_template(
+            "files.html",
+            files=correctfiles,
+            title="My Files"
+        )
