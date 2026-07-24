@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request , send_file ,current_app
 from app import app
 from werkzeug.utils import secure_filename
 import os
@@ -59,3 +59,8 @@ def files():
             files=correctfiles,
             title="My Files"
         )
+
+@app.route("/preview/<filename>")
+def preview(filename):
+    path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
+    return send_file(path)
