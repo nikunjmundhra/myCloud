@@ -1,4 +1,4 @@
-from flask import render_template, request , send_file ,current_app
+from flask import render_template, request , send_file ,current_app,abort
 from app import app
 from werkzeug.utils import secure_filename
 import os
@@ -62,5 +62,8 @@ def files():
 
 @app.route("/preview/<filename>")
 def preview(filename):
-    path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
-    return send_file(path)
+    if os.path.exists(f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'):
+        path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
+        return send_file(path)
+    else:
+        abort(404)
