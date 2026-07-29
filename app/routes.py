@@ -62,8 +62,16 @@ def files():
 
 @app.route("/preview/<filename>")
 def preview(filename):
-    if os.path.exists(f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'):
-        path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
+    path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
+    if os.path.exists(path):
         return send_file(path)
+    else:
+        abort(404)
+
+@app.route("/download/<filename>")
+def download(filename):
+    path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
+    if os.path.exists(path):
+        return send_file(path, as_attachment=True)
     else:
         abort(404)
