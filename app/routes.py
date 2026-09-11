@@ -2,6 +2,10 @@ from flask import render_template, request , send_file ,current_app,abort ,redir
 from app import app
 from werkzeug.utils import secure_filename
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.models import User
+from app import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route("/",methods =["GET","POST"])
 def home():
@@ -13,9 +17,24 @@ def home():
                            title ="Home",
                            name=name)
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html",title ="Login")
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and check_password_hash(user.password_hash, password):
+            return "Login successful"
+
+        return "Invalid username or password"
+
+    return render_template(
+        "login.html",
+        title="Login"
+    )
 
 @app.route("/upload" , methods =["GET","POST"])
 def upload():
@@ -94,3 +113,27 @@ def delete_files():
             os.remove(file_path)
 
     return redirect(url_for("files"))
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        password_hash = generate_password_hash(password)
+
+        user = User(
+            username=username,
+            password_hash=password_hash
+        )
+
+        db.session.add(user)
+        db.session.commit()
+
+        return "User registered successfully"
+
+    return render_template(
+        "register.html",
+        title="Register"
+    )
