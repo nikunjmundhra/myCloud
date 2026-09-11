@@ -1,4 +1,4 @@
-from flask import render_template, request , send_file ,current_app,abort ,redirect ,url_for
+from flask import render_template, request , send_file ,current_app,abort ,redirect ,url_for,session 
 from app import app
 from werkzeug.utils import secure_filename
 import os
@@ -27,7 +27,8 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and check_password_hash(user.password_hash, password):
-            return "Login successful"
+            session["user_id"] = user.id
+            return f"Logged in as user {session['user_id']}"
 
         return "Invalid username or password"
 
