@@ -1,11 +1,23 @@
 from flask import render_template, request , send_file ,current_app,abort ,redirect ,url_for,session 
 from app import app
+from functools import wraps
 from werkzeug.utils import secure_filename
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+
+def login_required(view):
+    @wraps(view)
+    def wrapped_view(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("login"))
+
+        return view(*args, **kwargs)
+
+    return wrapped_view
+
 
 @app.route("/",methods =["GET","POST"])
 def home():
@@ -38,6 +50,7 @@ def login():
     )
 
 @app.route("/upload" , methods =["GET","POST"])
+@login_required
 def upload():
      
     if request.method=="POST":
@@ -67,6 +80,7 @@ def upload():
     )
 
 @app.route("/files")
+@login_required
 def files():
     files = [
         file for file in os.listdir(app.config["UPLOAD_FOLDER"])
@@ -91,6 +105,7 @@ def preview(filename):
         abort(404)
 
 @app.route("/download/<filename>")
+@login_required
 def download(filename):
     path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
     if os.path.exists(path):
@@ -99,6 +114,7 @@ def download(filename):
         abort(404)
 
 @app.route("/delete", methods=["POST"])
+@login_required
 def delete_files():
 
     selected_files = request.form.getlist("selected_files")
@@ -138,3 +154,8 @@ def register():
         "register.html",
         title="Register"
     )
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
