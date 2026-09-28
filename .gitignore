@@ -19,3 +19,5 @@ Thumbs.db
 
 uploads/*
 !uploads/.gitkeep
+
+mycloud.db

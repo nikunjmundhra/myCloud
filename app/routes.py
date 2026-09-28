@@ -4,9 +4,8 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.models import User
 from app import db
-from werkzeug.security import generate_password_hash, check_password_hash
+from app.models import User, File
 
 def login_required(view):
     @wraps(view)
@@ -49,86 +48,128 @@ def login():
         title="Login"
     )
 
-@app.route("/upload" , methods =["GET","POST"])
+@app.route("/upload", methods=["GET", "POST"])
 @login_required
 def upload():
-     
-    if request.method=="POST":
+    if request.method == "POST":
         file = request.files["file"]
         if file.filename == "":
             return render_template(
                 "upload.html",
-             title="Upload")
-                
-        filename=secure_filename(file.filename)
-        base,extension=os.path.splitext(filename)
-        i=1
-        path=f"uploads/{filename}"
-        if os.path.exists(path):
-            filename=f"{base} ({i}){extension}"
-            path=f"uploads/{filename}"
-            while os.path.exists(f"uploads/{base} ({i}){extension}"):
-                i+=1
-                filename=f"{base} ({i}){extension}"
-                path=f"uploads/{base} ({i}){extension}"
+                title="Upload"
+            )
+        filename = secure_filename(file.filename)
+        base, extension = os.path.splitext(filename)
+        i = 1
+        path = os.path.join(
+            current_app.config["UPLOAD_FOLDER"],
+            filename
+        )
+        while os.path.exists(path):
+            filename = f"{base} ({i}){extension}"
+            path = os.path.join(
+                current_app.config["UPLOAD_FOLDER"],
+                filename
+            )
+            i += 1
         file.save(path)
+        new_file = File(
+            filename=filename,
+            user_id=session["user_id"]
+        )
+        db.session.add(new_file)
+        db.session.commit()
+
         print(f"Saved file: {filename}")
 
     return render_template(
         "upload.html",
-        title="upload"
+        title="Upload"
     )
 
 @app.route("/files")
 @login_required
 def files():
-    files = [
-        file for file in os.listdir(app.config["UPLOAD_FOLDER"])
-        if file != ".gitkeep"
-    ]
+
+    user_files = File.query.filter_by(
+        user_id=session["user_id"]
+    ).all()
+
+    correctfiles = []
+
+    for file in user_files:
+        correctfiles.append(file.filename)
 
     selection_mode = request.args.get("mode") == "delete"
 
     return render_template(
         "files.html",
-        files=files,
+        files=correctfiles,
+        title="My Files",
         selection_mode=selection_mode
     )
         
 
 @app.route("/preview/<filename>")
+@login_required
 def preview(filename):
-    path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
-    if os.path.exists(path):
-        return send_file(path)
-    else:
+
+    file_record = File.query.filter_by(
+        filename=filename,
+        user_id=session["user_id"]
+    ).first()
+    if not file_record:
         abort(404)
+    path = os.path.join(
+        current_app.config["UPLOAD_FOLDER"],
+        filename
+    )
+    if os.path.exists(path) and os.path.isfile(path):
+        return send_file(path)
+    abort(404)
 
 @app.route("/download/<filename>")
 @login_required
 def download(filename):
-    path = f'{current_app.config["UPLOAD_FOLDER"]}/{filename}'
-    if os.path.exists(path):
-        return send_file(path, as_attachment=True)
-    else:
+
+    file_record = File.query.filter_by(
+        filename=filename,
+        user_id=session["user_id"]
+    ).first()
+
+    if not file_record:
         abort(404)
+
+    path = os.path.join(
+        current_app.config["UPLOAD_FOLDER"],
+        filename
+    )
+
+    if os.path.exists(path) and os.path.isfile(path):
+        return send_file(path, as_attachment=True)
+
+    abort(404)
 
 @app.route("/delete", methods=["POST"])
 @login_required
 def delete_files():
-
     selected_files = request.form.getlist("selected_files")
-
     for filename in selected_files:
-
+        filename = secure_filename(filename)
+        file_record = File.query.filter_by(
+            filename=filename,
+            user_id=session["user_id"]
+        ).first()
+        if not file_record:
+            continue
         file_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
+            current_app.config["UPLOAD_FOLDER"],
             filename
         )
-
         if os.path.exists(file_path) and os.path.isfile(file_path):
             os.remove(file_path)
-
+        db.session.delete(file_record)
+    db.session.commit()
     return redirect(url_for("files"))
 
 @app.route("/register", methods=["GET", "POST"])
