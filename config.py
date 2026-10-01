@@ -1,6 +1,6 @@
 import os
 
-SECRET_KEY = "my_secret_key"
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
 BASE_DIR = os.path.dirname(__file__)
 
