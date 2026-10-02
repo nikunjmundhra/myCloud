@@ -98,7 +98,17 @@ def files():
     correctfiles = []
 
     for file in user_files:
-        correctfiles.append(file.filename)
+        path = os.path.join(
+            current_app.config["UPLOAD_FOLDER"],
+            file.filename
+        )
+
+        if os.path.isfile(path):
+            correctfiles.append(file.filename)
+        else:
+            db.session.delete(file)
+
+    db.session.commit()
 
     selection_mode = request.args.get("mode") == "delete"
 

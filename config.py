@@ -6,5 +6,10 @@ BASE_DIR = os.path.dirname(__file__)
 
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 
-SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASE_DIR, "mycloud.db")
+DATABASE_PATH = os.environ.get(
+    "DATABASE_PATH",
+    os.path.join(BASE_DIR, "mycloud.db")
+)
+
+SQLALCHEMY_DATABASE_URI = "sqlite:///" + DATABASE_PATH
 SQLALCHEMY_TRACK_MODIFICATIONS = False
