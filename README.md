@@ -1,6 +1,7 @@
 # myCloud
 
 A lightweight personal cloud storage application built with **Flask**, **SQLite**, **Docker**, and **Nginx**.
+here's a link to check it out : https://mycloudnikk.duckdns.org/
 
 myCloud was built as a hands-on learning project to explore web development, authentication, databases, containers, Linux server administration, HTTPS, AWS, and CI/CD.
 
