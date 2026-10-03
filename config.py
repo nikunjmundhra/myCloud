@@ -1,6 +1,10 @@
 import os
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 BASE_DIR = os.path.dirname(__file__)
 
