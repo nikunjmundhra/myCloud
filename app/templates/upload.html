@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block title %}Upload{% endblock %}
 
 {% block content %}
@@ -6,10 +7,38 @@
     <p class="eyebrow">My files</p>
     <h1>Upload a file</h1>
     <p class="intro">Choose a file to add to your personal cloud storage.</p>
-    <form method="POST" enctype="multipart/form-data" class="stacked-form upload-form">
+
+    <form method="POST" enctype="multipart/form-data" class="stacked-form">
         <label for="file">Choose file</label>
         <input id="file" type="file" name="file" required>
-        <button class="button primary" type="submit">Upload file</button>
+
+        <p id="file-error" class="file-error" hidden>
+            File is too large. Maximum allowed size is 100 MB.
+        </p>
+
+        <button class="button primary" type="submit" id="upload-button">
+            Upload file
+        </button>
     </form>
 </section>
+
+<script>
+    const fileInput = document.getElementById("file");
+    const uploadButton = document.getElementById("upload-button");
+    const fileError = document.getElementById("file-error");
+
+    const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+
+    fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+
+        if (file && file.size > MAX_FILE_SIZE) {
+            fileError.hidden = false;
+            uploadButton.disabled = true;
+        } else {
+            fileError.hidden = true;
+            uploadButton.disabled = false;
+        }
+    });
+</script>
 {% endblock %}

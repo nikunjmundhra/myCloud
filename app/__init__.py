@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(
@@ -8,6 +8,9 @@ app = Flask(
 )
 
 app.config.from_object("config")
+@app.errorhandler(413)
+def file_too_large(error):
+    return render_template("413.html"), 413
 
 db = SQLAlchemy(app)
 
