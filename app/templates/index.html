@@ -3,47 +3,6 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-{% if current_username %}
-    <section class="hero dashboard-hero">
-        <p class="eyebrow">Your personal cloud</p>
-        <h1>Welcome back, {{ current_username }}.</h1>
-        <p>Keep your files together and available whenever you need them.</p>
-        <div class="action-row">
-            <a class="button primary" href="{{ url_for('upload') }}">Upload files</a>
-            <a class="button secondary" href="{{ url_for('files') }}">View my files</a>
-        </div>
-    </section>
-    <section class="dashboard-grid">
-        <article class="panel storage-card">
-            <p class="eyebrow">Storage overview</p>
-            <h2>{{ storage.free }} free</h2>
-            <p>{{ storage.used }} used of {{ storage.total }}.</p>
-            <div class="storage-bar large" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ storage.percent_used }}"><span data-storage-percent="{{ storage.percent_used }}"></span></div>
-        </article>
-        <article class="panel recent-files">
-            <div class="section-heading"><div><p class="eyebrow">Recent uploads</p><h2>Your files</h2></div><a href="{{ url_for('files') }}">See all</a></div>
-            {% if recent_files %}
-                <ul class="file-list">
-                    {% for file in recent_files %}
-                        <li><a href="{{ url_for('preview', filename=file.filename) }}">{{ file.filename }}</a><a class="download-link" href="{{ url_for('download', filename=file.filename) }}">Download</a></li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <div class="empty-state"><p>No files uploaded yet.</p><a href="{{ url_for('upload') }}">Upload your first file <span aria-hidden="true">→</span></a></div>
-            {% endif %}
-        </article>
-    </section>
-{% else %}
-    <section class="hero landing-hero">
-        <p class="eyebrow">Simple, personal file storage</p>
-        <h1>Your files, in your cloud.</h1>
-        <p>myCloud is a personal space to upload, view, download, and manage your files from one place.</p>
-        <div class="action-row"><a class="button primary" href="{{ url_for('register') }}">Create an account</a><a class="button secondary" href="{{ url_for('login') }}">Log in</a></div>
-    </section>
-    <section class="feature-grid" aria-label="myCloud features">
-        <article class="panel"><h2>Upload with ease</h2><p>Add the files you need and keep them organized in your personal library.</p></article>
-        <article class="panel"><h2>Access your files</h2><p>Preview or download files when you need them from your own cloud space.</p></article>
-        <article class="panel"><h2>Know your storage</h2><p>Your available server storage is always visible in the header.</p></article>
-    </section>
-{% endif %}
+    <h1>Welcome to myCloud</h1>
+    <p>Your personal cloud server is running.</p>
 {% endblock %}

@@ -3,24 +3,17 @@
 {% block title %}Upload{% endblock %}
 
 {% block content %}
-<section class="content-card">
-    <p class="eyebrow">My files</p>
-    <h1>Upload a file</h1>
-    <p class="intro">Choose a file to add to your personal cloud storage.</p>
+    <h1>Upload File</h1>
 
-    <form method="POST" enctype="multipart/form-data" class="stacked-form">
-        <label for="file">Choose file</label>
+    <form method="POST" enctype="multipart/form-data">
         <input id="file" type="file" name="file" required>
 
-        <p id="file-error" class="file-error" hidden>
+        <p id="file-error" hidden>
             File is too large. Maximum allowed size is 100 MB.
         </p>
 
-        <button class="button primary" type="submit" id="upload-button">
-            Upload file
-        </button>
+        <button type="submit" id="upload-button">Upload</button>
     </form>
-</section>
 
 <script>
     const fileInput = document.getElementById("file");

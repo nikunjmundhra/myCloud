@@ -1,34 +1,43 @@
 {% extends "base.html" %}
 {% block title %}{{ title}}{% endblock %}
 {% block content %}
-<section class="content-card">
-    <div class="section-heading">
-        <div><p class="eyebrow">My cloud</p><h1>My Files</h1></div>
-        {% if files and not selection_mode %}<a class="button danger-link" href="{{ url_for('files', mode='delete') }}">Delete files</a>{% endif %}
-    </div>
+<h1>My Files</h1>
 
-    {% if files %}
-        {% if selection_mode %}
-            <form method="POST" action="{{ url_for('delete_files') }}">
-                <ul class="file-list files-page-list">
-                {% for file in files %}
-                    <li>
-                        <label class="file-choice"><input type="checkbox" name="selected_files" value="{{ file }}"><a href="{{ url_for('preview', filename=file) }}">{{ file }}</a></label>
-                        <a class="download-link" href="{{ url_for('download', filename=file) }}">Download</a>
-                    </li>
-                {% endfor %}
-                </ul>
-                <div class="action-row"><button class="button danger" type="submit">Delete selected</button><a class="button secondary" href="{{ url_for('files') }}">Cancel</a></div>
-            </form>
-        {% else %}
-            <ul class="file-list files-page-list">
-            {% for file in files %}
-                <li><a href="{{ url_for('preview', filename=file) }}">{{ file }}</a><a class="download-link" href="{{ url_for('download', filename=file) }}">Download</a></li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% else %}
-        <div class="empty-state"><p>No files uploaded yet.</p><a href="{{ url_for('upload') }}">Upload your first file <span aria-hidden="true">→</span></a></div>
-    {% endif %}
-</section>
+{% if selection_mode %}
+
+<form method="POST" action="/delete">
+
+    <ul>
+    {% for file in files %}
+        <li>
+            <input type="checkbox" name="selected_files" value="{{ file }}">
+
+            <a href="/preview/{{ file }}">{{ file }}</a>
+
+            <a href="/download/{{ file }}">Download</a>
+        </li>
+    {% endfor %}
+    </ul>
+
+    <button type="submit">Delete Selected</button>
+
+    <a href="/files">Cancel</a>
+
+</form>
+
+{% else %}
+
+<ul>
+{% for file in files %}
+    <li>
+        <a href="/preview/{{ file }}">{{ file }}</a>
+
+        <a href="/download/{{ file }}">Download</a>
+    </li>
+{% endfor %}
+</ul>
+
+<a href="/files?mode=delete">Delete Files</a>
+
+{% endif %}
 {% endblock %}

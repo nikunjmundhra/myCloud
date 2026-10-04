@@ -4,19 +4,24 @@
 
 {% block content %}
 
-<section class="auth-card">
-    <p class="eyebrow">Start using myCloud</p>
-    <h1>Create your account</h1>
-    <p>Your personal file space is only a few details away.</p>
-    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
-    <form method="POST" action="{{ url_for('register') }}" class="stacked-form">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" value="{{ submitted_username|default('') }}" autocomplete="username" required>
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" autocomplete="new-password" required>
-        <button class="button primary" type="submit">Create account</button>
-    </form>
-    <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
-</section>
+<h1>Register</h1>
+
+{% if error %}
+<p>{{ error }}</p>
+{% endif %}
+
+<form method="POST" action="/register">
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" value="{{ submitted_username|default('') }}" required>
+    <br><br>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br><br>
+
+    <button type="submit">Register</button>
+
+</form>
 
 {% endblock %}
